@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "zaplink",
+    "productName": "ZapLink",
     "version": "0.1.0"
   },
   "tauri": {
@@ -48,7 +48,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.zaplink.app",
+      "identifier": "com.InfiniteL8p.app",
       "icon": [
         "icons/icon.ico",
         "icons/zaplink.png"
