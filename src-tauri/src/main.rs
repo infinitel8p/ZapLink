@@ -4,9 +4,17 @@
 )]
 
 use tauri::{
-    api::shell::open, AppHandle, CustomMenuItem, Manager,
-    SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, SystemTraySubmenu, GlobalShortcutManager,
+    api::shell::open,
+    AppHandle,
+    CustomMenuItem,
+    GlobalShortcutManager,
+    Manager,
+    SystemTray,
+    SystemTrayEvent,
+    SystemTrayMenu,
+    SystemTrayMenuItem,
+    SystemTraySubmenu,
+    Window
 };
 use copypasta::{ClipboardContext, ClipboardProvider};
 use tauri::regex::Regex;
@@ -17,11 +25,16 @@ const LINKS: [(&str, &str, &str); 2] = [
     ("open-github-zaplink", "ZapLink","https://github.com/infinitel8p/zaplink"),
 ];
 
+#[tauri::command]
+async fn close_splashscreen(window: Window) {
+    window.get_window("splashscreen").expect("no window labeled 'splashscreen' found").close().unwrap();
+}
+
 fn main() {
     let sub_menu_github = {
         let mut menu = SystemTrayMenu::new();
         for (id, label, _url) in
-            LINKS.iter().filter(|(id, label, _url)| {
+            LINKS.iter().filter(|(id, _label, _url)| {
                 id.starts_with("open-github")
             })
         {
@@ -49,6 +62,7 @@ fn main() {
     let tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![close_splashscreen])
         .system_tray(tray)
         .on_system_tray_event(on_system_tray_event)
         .setup(|app| {
@@ -63,7 +77,6 @@ fn main() {
                 let clipboard_content = ctx.get_contents().unwrap_or_default();
 
                 if url_pattern.is_match(&clipboard_content) {
-                // If the URL doesn't have http or https, prepend "http://"
                 let url = if clipboard_content.starts_with("http://") || clipboard_content.starts_with("https://") {
                     clipboard_content.to_string()
                 } else {
@@ -97,20 +110,18 @@ fn on_system_tray_event(
 ) {
     match event {
         SystemTrayEvent::MenuItemClick { id, .. } => {
-            let item_handle =
-                app.tray_handle().get_item(&id);
+            let item_handle = app.tray_handle().get_item(&id);
             dbg!(&id);
             match id.as_str() {
                 "visibility-toggle" => {
-                    let window =
-                        app.get_window("main").unwrap();
+                    let window = app.get_window("main").unwrap();
                     match window.is_visible() {
                         Ok(true) => {
                             window.hide().unwrap();
                             item_handle.set_title("Show").unwrap();
                         },
                         Ok(false) => {
-                            window.show();
+                            window.show().unwrap();
                             item_handle.set_title("Hide").unwrap();
                         },
                         Err(_e) => unimplemented!("what kind of errors happen here?"),
@@ -126,8 +137,7 @@ fn on_system_tray_event(
                             &app.shell_scope(),
                             link.2,
                             None,
-                        )
-                        .unwrap();
+                        ).unwrap();
                     }
                 }
                 _ => {}

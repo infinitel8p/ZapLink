@@ -1,8 +1,8 @@
 [package]
-name = "zaplink"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "ZapLink"
+version = "0.1.1"
+description = "ZapLink is a simple desktop tool that opens valid URLs when Alt+V is pressed."
+authors = ["InfiniteL8p"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
