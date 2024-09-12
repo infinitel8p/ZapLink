@@ -6,8 +6,10 @@
 use tauri::{
     api::shell::open, AppHandle, CustomMenuItem, Manager,
     SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, SystemTraySubmenu,
+    SystemTrayMenuItem, SystemTraySubmenu, GlobalShortcutManager,
 };
+use copypasta::{ClipboardContext, ClipboardProvider};
+use tauri::regex::Regex;
 
 const LINKS: [(&str, &str, &str); 2] = [
     // github links
@@ -49,6 +51,34 @@ fn main() {
     tauri::Builder::default()
         .system_tray(tray)
         .on_system_tray_event(on_system_tray_event)
+        .setup(|app| {
+            let app_handle = app.handle();
+            let mut shortcut_manager = app.global_shortcut_manager();
+
+            // Register the Alt + V shortcut
+            shortcut_manager.register("Alt+V", move || {
+                let url_pattern = Regex::new(r"[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)").unwrap();
+
+                let mut ctx = ClipboardContext::new().unwrap();
+                let clipboard_content = ctx.get_contents().unwrap_or_default();
+
+                if url_pattern.is_match(&clipboard_content) {
+                // If the URL doesn't have http or https, prepend "http://"
+                let url = if clipboard_content.starts_with("http://") || clipboard_content.starts_with("https://") {
+                    clipboard_content.to_string()
+                } else {
+                    format!("http://{}", clipboard_content)
+                };
+
+                // Open the URL from the clipboard
+                open(&app_handle.shell_scope(), &url, None).unwrap();
+            } else {
+                println!("Clipboard content is not a valid URL.");
+            }
+        }).unwrap();
+
+        Ok(())
+        })
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(|_app_handle, event| match event {
@@ -83,7 +113,7 @@ fn on_system_tray_event(
                             window.show();
                             item_handle.set_title("Hide").unwrap();
                         },
-                        Err(e) => unimplemented!("what kind of errors happen here?"),
+                        Err(_e) => unimplemented!("what kind of errors happen here?"),
                     }
                 }
                 "quit" => app.exit(0),
