@@ -37,16 +37,15 @@ const AppVersion = () => {
     <div className="h-dvh w-dvw bg-[#1a1a1a] flex flex-col gap-1 items-center justify-center select-none">
       <div className="flex gap-1 items-center">
         <img src={ZapLinkLogo} className="h-6 w-6" alt="React Logo" />
-        <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
+        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500">
           ZapLink v.{version}
         </h1>
       </div>
-      <p className="text-xs font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
-        ALT + V
+      <p className="text-gray-400">
+        <kbd className="px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500">Alt</kbd> + <kbd className="px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500">V</kbd>
       </p>
-
       {isUpdateAvailable && (
-        <a href="https://github.com/infinitel8p/zaplink/releases/latest" className="text-xs text-red-500 hover:underline" target="_blank">
+        <a href="https://github.com/infinitel8p/zaplink/releases/latest" className="bg-indigo-600 px-4 py-0.5 text-gray-100 absolute top-0 w-full text-center text-xs font-medium inline-block underline" target="_blank">
           Update Available: v.{latestVersion}
         </a>
       )}
