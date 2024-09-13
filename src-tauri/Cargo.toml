@@ -1,6 +1,6 @@
 [package]
 name = "ZapLink"
-version = "0.1.1"
+version = "0.1.2"
 description = "ZapLink is a simple desktop tool that opens valid URLs when Alt+V is pressed."
 authors = ["InfiniteL8p"]
 edition = "2021"

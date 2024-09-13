@@ -30,6 +30,11 @@ async fn close_splashscreen(window: Window) {
     window.get_window("splashscreen").expect("no window labeled 'splashscreen' found").close().unwrap();
 }
 
+#[tauri::command]
+async fn unhide_window(window: Window) {
+    window.show().unwrap();
+}
+
 fn main() {
     let sub_menu_github = {
         let mut menu = SystemTrayMenu::new();
@@ -62,7 +67,7 @@ fn main() {
     let tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![close_splashscreen])
+        .invoke_handler(tauri::generate_handler![close_splashscreen, unhide_window])
         .system_tray(tray)
         .on_system_tray_event(on_system_tray_event)
         .setup(|app| {
