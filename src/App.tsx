@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { getVersion } from '@tauri-apps/api/app';
 import ZapLinkLogo from "./assets/zaplink.svg";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 import "./App.css";
 
 const AppVersion = () => {
@@ -21,13 +22,25 @@ const AppVersion = () => {
     fetchVersion();
   }, []);
 
-  const isUpdateAvailable = version < latestVersion;
+  const isUpdateAvailable = version == latestVersion;
+
+  const handleNotification = async () => {
+    let permissionGranted = await isPermissionGranted();
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === 'granted';
+    }
+    if (permissionGranted) {
+      sendNotification({ title: 'ZapLink', body: 'Update Available' });
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => {
       invoke('close_splashscreen').then(() => {
         if (isUpdateAvailable) {
           invoke('unhide_window');
+          handleNotification();
         }
       });
     }, 1000);

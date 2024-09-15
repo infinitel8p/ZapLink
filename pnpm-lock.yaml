@@ -23,9 +23,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
-      tailwindcss:
-        specifier: ^3.4.11
-        version: 3.4.11
+      zaplink:
+        specifier: 'file:'
+        version: file:(jiti@1.21.6)(postcss@8.4.45)
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^1
@@ -39,6 +39,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.1
         version: 4.3.1(vite@5.4.4)
+      tailwindcss:
+        specifier: ^3.4.11
+        version: 3.4.11
       typescript:
         specifier: ^5.2.2
         version: 5.6.2
@@ -1164,6 +1167,9 @@ packages:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
 
+  'zaplink@file:':
+    resolution: {directory: '', type: directory}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -2173,3 +2179,17 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
+
+  zaplink@file:(jiti@1.21.6)(postcss@8.4.45):
+    dependencies:
+      '@tauri-apps/api': 1.6.0
+      autoprefixer: 10.4.20(postcss@8.4.45)
+      postcss-cli: 11.0.0(jiti@1.21.6)(postcss@8.4.45)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tailwindcss: 3.4.11
+    transitivePeerDependencies:
+      - jiti
+      - postcss
+      - ts-node
+      - tsx
