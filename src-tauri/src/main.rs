@@ -50,8 +50,14 @@ async fn close_splashscreen(window: Window) {
 }
 
 #[tauri::command]
-async fn unhide_window(window: Window) {
-    window.show().unwrap();
+async fn unhide_window(app: AppHandle) {
+    print!("Unhiding window");
+    if let Some(window) = app.get_window("main") {
+        window.show().unwrap();
+        window.set_focus().unwrap();
+    } else {
+        println!("Main window not found.");
+    }
 }
 
 #[tauri::command]
@@ -205,7 +211,6 @@ fn on_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     match event {
         SystemTrayEvent::MenuItemClick { id, .. } => {
             let item_handle = app.tray_handle().get_item(&id);
-            dbg!(&id);
             match id.as_str() {
                 "visibility-toggle" => {
                     let window = app.get_window("main").unwrap();

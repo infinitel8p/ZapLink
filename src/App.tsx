@@ -90,12 +90,11 @@ const AppVersion = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      invoke('close_splashscreen').then(() => {
-        if (isUpdateAvailable) {
-          invoke('unhide_window');
-          handleNotification();
-        }
-      });
+      invoke('close_splashscreen');
+      if (isUpdateAvailable) {
+        invoke('unhide_window');
+        handleNotification();
+      }
     }, 1000);
   }, [isUpdateAvailable]);
 
