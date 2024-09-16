@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { getVersion } from '@tauri-apps/api/app';
 import ZapLinkLogo from "./assets/zaplink.svg";
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+import { WebviewWindow } from '@tauri-apps/api/window';
+import { listen } from '@tauri-apps/api/event';
 import "./App.css";
 
 const AppVersion = () => {
@@ -10,17 +12,54 @@ const AppVersion = () => {
   const [latestVersion, setLatestVersion] = useState('');
   const [hotkey, setHotkey] = useState<string[]>([]);
 
-  useEffect(() => {
-    const fetchHotkey = async () => {
-      try {
-        const fetchedHotkey = await invoke('get_hotkey');
-        setHotkey(fetchedHotkey as string[]);
-      } catch (error) {
-        console.error('Error fetching hotkey:', error);
-      }
-    };
+  const openHotkeySettings = () => {
+    // Check if the window already exists to prevent duplicates
+    let hotkeyWindow = WebviewWindow.getByLabel('hotkey-settings');
 
+    if (!hotkeyWindow) {
+      // Create a new window
+      hotkeyWindow = new WebviewWindow('hotkey-settings', {
+        url: `${window.location.origin}/#/hotkey-settings`,
+        title: 'Change Hotkey',
+        width: 250,
+        height: 150,
+        resizable: false,
+        visible: true,
+        center: true,
+      });
+
+      // Optional: Handle events or errors
+      hotkeyWindow.once('tauri://error', (e) => {
+        console.error('Failed to create hotkey settings window', e);
+      });
+    } else {
+      // If the window already exists, just show it
+      hotkeyWindow.show();
+      hotkeyWindow.setFocus();
+    }
+  };
+
+  const fetchHotkey = async () => {
+    try {
+      const fetchedHotkey = await invoke('get_hotkey');
+      setHotkey(fetchedHotkey as string[]);
+    } catch (error) {
+      console.error('Error fetching hotkey:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchHotkey();
+
+    // Listen for the hotkey-updated event
+    const unlisten = listen('hotkey-updated', () => {
+      fetchHotkey();
+    });
+
+    return () => {
+      // Clean up the event listener when the component is unmounted
+      unlisten.then((f) => f());
+    };
   }, []);
 
   useEffect(() => {
@@ -81,7 +120,13 @@ const AppVersion = () => {
           Update Available: v.{latestVersion}
         </a>
       )}
-      <a href="https://github.com/infinitel8p/zaplink" className="absolute bottom-0.5 text-xs text-gray-700 hover:underline" target="_blank">Visit Repository</a>
+
+      <div className="absolute bottom-0.5 text-xs text-gray-700 flex items-end gap-2">
+        <button onClick={openHotkeySettings} className=" hover:underline">
+          Change Hotkey
+        </button>
+        <a href="https://github.com/infinitel8p/zaplink" target="_blank" className=" hover:underline">Visit Repository</a>
+      </div>
     </div>
   );
 };

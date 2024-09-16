@@ -1,6 +1,6 @@
 [package]
 name = "ZapLink"
-version = "0.1.4"
+version = "0.1.5"
 description = "ZapLink is a simple desktop tool that opens valid URLs when Alt+V is pressed."
 authors = ["InfiniteL8p"]
 edition = "2021"
@@ -11,7 +11,7 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "notification-all", "clipboard-read-text", "global-shortcut-all", "system-tray", "shell-open"] }
+tauri = { version = "1", features = [ "window-close", "window-create", "notification-all", "clipboard-read-text", "global-shortcut-all", "system-tray", "shell-open"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 copypasta = "0.8.0"

@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "ZapLink",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "tauri": {
     "systemTray": {
@@ -30,21 +30,13 @@
       },
       "notification": {
         "all": true
+      },
+      "window": {
+        "create": true,
+        "close": true
       }
     },
     "windows": [
-      {
-        "title": "ZapLink",
-        "width": 250,
-        "height": 150,
-        "fullscreen": false,
-        "resizable": false,
-        "maximizable": false,
-        "minimizable": false,
-        "visible": false,
-        "theme": "Dark",
-        "center": true
-      },
       {
         "width": 250,
         "height": 250,
@@ -56,6 +48,18 @@
         "transparent": false,
         "url": "splashscreen.html",
         "label": "splashscreen"
+      },
+      {
+        "title": "ZapLink",
+        "width": 250,
+        "height": 150,
+        "fullscreen": false,
+        "resizable": false,
+        "maximizable": false,
+        "minimizable": false,
+        "visible": false,
+        "theme": "Dark",
+        "center": true
       }
     ],
     "security": {
