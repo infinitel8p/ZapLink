@@ -22,7 +22,7 @@ const AppVersion = () => {
     fetchVersion();
   }, []);
 
-  const isUpdateAvailable = version == latestVersion;
+  const isUpdateAvailable = version < latestVersion;
 
   const handleNotification = async () => {
     let permissionGranted = await isPermissionGranted();
@@ -31,7 +31,7 @@ const AppVersion = () => {
       permissionGranted = permission === 'granted';
     }
     if (permissionGranted) {
-      sendNotification({ title: 'ZapLink', body: 'Update Available' });
+      sendNotification({ title: 'ZapLink', body: 'Update Available', icon: ZapLinkLogo });
     }
   };
 
