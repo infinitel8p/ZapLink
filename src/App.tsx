@@ -8,6 +8,20 @@ import "./App.css";
 const AppVersion = () => {
   const [version, setVersion] = useState('');
   const [latestVersion, setLatestVersion] = useState('');
+  const [hotkey, setHotkey] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchHotkey = async () => {
+      try {
+        const fetchedHotkey = await invoke('get_hotkey');
+        setHotkey(fetchedHotkey as string[]);
+      } catch (error) {
+        console.error('Error fetching hotkey:', error);
+      }
+    };
+
+    fetchHotkey();
+  }, []);
 
   useEffect(() => {
     const fetchVersion = async () => {
@@ -55,7 +69,12 @@ const AppVersion = () => {
         </h1>
       </div>
       <p className="text-gray-400">
-        <kbd className="px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500">Alt</kbd> + <kbd className="px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500">V</kbd>
+        {hotkey.map((key, index) => (
+          <span key={index}>
+            <kbd className="px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500">{key}</kbd>
+            {index < hotkey.length - 1 && ' + '}
+          </span>
+        ))}
       </p>
       {isUpdateAvailable && (
         <a href="https://github.com/infinitel8p/zaplink/releases/latest" className="bg-indigo-600 px-4 py-0.5 text-gray-100 absolute top-0 w-full text-center text-xs font-medium inline-block underline" target="_blank">

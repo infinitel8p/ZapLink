@@ -18,6 +18,21 @@ use tauri::{
 };
 use copypasta::{ClipboardContext, ClipboardProvider};
 use tauri::regex::Regex;
+use serde::{Deserialize, Serialize};
+
+// Define the settings struct
+#[derive(Serialize, Deserialize)]
+struct Settings {
+    hotkey: String,
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Settings {
+            hotkey: "Alt+V".to_string(),
+        }
+    }
+}
 
 const LINKS: [(&str, &str, &str); 2] = [
     // GitHub links
@@ -39,6 +54,27 @@ async fn unhide_window(window: Window) {
     window.show().unwrap();
 }
 
+#[tauri::command]
+async fn get_hotkey() -> Vec<String> {
+    // Get the settings file path
+    let config_dir = tauri::api::path::config_dir().expect("Failed to get config directory");
+    let settings_dir = config_dir.join("ZapLink");
+    let settings_path = settings_dir.join("settings.json");
+
+    // Read the settings
+    let settings: Settings = if settings_path.exists() {
+        std::fs::read_to_string(&settings_path)
+            .ok()
+            .and_then(|content| serde_json::from_str(&content).ok())
+            .unwrap_or_default()
+    } else {
+        Settings::default()
+    };
+
+    // Split the hotkey string on '+'
+    settings.hotkey.split('+').map(|s| s.to_string()).collect()
+}
+
 fn main() {
     let sub_menu_github = {
         let mut menu = SystemTrayMenu::new();
@@ -58,7 +94,7 @@ fn main() {
     let tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![close_splashscreen, unhide_window])
+        .invoke_handler(tauri::generate_handler![close_splashscreen, unhide_window, get_hotkey])
         .system_tray(tray)
         .on_system_tray_event(on_system_tray_event)
         .setup(|app| {
@@ -85,31 +121,50 @@ fn main() {
 
             let mut shortcut_manager = app.global_shortcut_manager();
 
-            // Register the Alt + V shortcut
-            shortcut_manager
-                .register("Alt+V", move || {
-                    let url_pattern = Regex::new(
-                        r"[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)",
-                    )
-                    .unwrap();
+            // Get the settings file path
+            let config_dir = tauri::api::path::config_dir().expect("Failed to get config directory");
+            let settings_dir = config_dir.join("ZapLink");
+            std::fs::create_dir_all(&settings_dir).expect("Failed to create settings directory");
+            let settings_path = settings_dir.join("settings.json");
 
-                    let mut ctx = ClipboardContext::new().unwrap();
-                    let clipboard_content = ctx.get_contents().unwrap_or_default();
+            // Read the settings
+            let settings: Settings = if settings_path.exists() {
+                std::fs::read_to_string(&settings_path)
+                    .ok()
+                    .and_then(|content| serde_json::from_str(&content).ok())
+                    .unwrap_or_default()
+            } else {
+                let default_settings = Settings::default();
+                std::fs::write(&settings_path, serde_json::to_string_pretty(&default_settings).unwrap())
+                    .expect("Failed to write default settings");
+                default_settings
+            };
 
-                    if url_pattern.is_match(&clipboard_content) {
-                        let url = if clipboard_content.starts_with("http://") || clipboard_content.starts_with("https://") {
-                            clipboard_content.to_string()
-                        } else {
-                            format!("http://{}", clipboard_content)
-                        };
-
-                        // Open the URL from the clipboard
-                        open(&app_handle.shell_scope(), &url, None).unwrap();
-                    } else {
-                        println!("Clipboard content is not a valid URL.");
-                    }
-                })
+            // Register the shortcut
+            let hotkey = settings.hotkey.clone();
+            let app_handle_clone = app_handle.clone();
+            shortcut_manager.register(&hotkey, move || {
+                let url_pattern = Regex::new(
+                    r"[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)",
+                )
                 .unwrap();
+
+                let mut ctx = ClipboardContext::new().unwrap();
+                let clipboard_content = ctx.get_contents().unwrap_or_default();
+
+                if url_pattern.is_match(&clipboard_content) {
+                    let url = if clipboard_content.starts_with("http://") || clipboard_content.starts_with("https://") {
+                        clipboard_content.to_string()
+                    } else {
+                        format!("http://{}", clipboard_content)
+                    };
+
+                    // Open the URL from the clipboard
+                    open(&app_handle_clone.shell_scope(), &url, None).unwrap();
+                } else {
+                    println!("Clipboard content is not a valid URL.");
+                }
+            }).unwrap();
 
             Ok(())
         })
