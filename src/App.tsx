@@ -28,7 +28,6 @@ const AppVersion = () => {
         center: true,
       });
 
-      // Optional: Handle events or errors
       hotkeyWindow.once('tauri://error', (e) => {
         console.error('Failed to create hotkey settings window', e);
       });
@@ -102,7 +101,7 @@ const AppVersion = () => {
     <div className="h-dvh w-dvw bg-[#1a1a1a] flex flex-col gap-1 items-center justify-center select-none">
       <div className="flex gap-1 items-center">
         <img src={ZapLinkLogo} className="h-6 w-6" alt="React Logo" />
-        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500">
+        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 animate-gradient-shift">
           ZapLink v.{version}
         </h1>
       </div>

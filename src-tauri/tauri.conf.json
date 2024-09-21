@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "ZapLink",
-    "version": "0.1.6"
+    "version": "0.1.7"
   },
   "tauri": {
     "systemTray": {
@@ -45,9 +45,9 @@
         "maximizable": false,
         "fullscreen": false,
         "center": true,
-        "transparent": false,
         "url": "splashscreen.html",
-        "label": "splashscreen"
+        "label": "splashscreen",
+        "transparent": true
       },
       {
         "title": "ZapLink",

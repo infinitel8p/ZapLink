@@ -44,7 +44,7 @@ const LINKS: [(&str, &str, &str); 2] = [
 async fn close_splashscreen(window: Window) {
     window
         .get_window("splashscreen")
-        .expect("no window labeled 'splashscreen' found")
+        .expect("No window labeled 'splashscreen' found")
         .close()
         .unwrap();
 }
@@ -86,7 +86,6 @@ async fn update_hotkey(
     app_handle: tauri::AppHandle,
     new_hotkey: Vec<String>,
 ) -> Result<(), String> {
-    // Join the hotkey parts into a single string
     let hotkey = new_hotkey.join("+");
 
     // Get the settings file path
@@ -160,9 +159,8 @@ fn main() {
             // Intercept the window close event
             main_window.on_window_event(move |event| {
                 if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                    // Prevent the window from closing
+                    // Prevent the window from closing and hide it instead
                     api.prevent_close();
-                    // Hide the window instead
                     main_window_clone.hide().unwrap();
 
                     // Update the system tray menu item to "Show"

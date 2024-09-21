@@ -8,6 +8,7 @@
     <meta name="author" content="InfiniteL8p" />
     <title>ZapLink</title>
     <style>
+        /* Reset and basic styles */
         * {
             margin: 0;
             padding: 0;
@@ -32,11 +33,10 @@
             align-items: center;
         }
 
-        /* From Uiverse.io by G4b413l */
+        /* Loader styles with color transition */
         .line-wobble {
             --uib-size: 80px;
             --uib-speed: 1.55s;
-            --uib-color: white;
             --uib-line-weight: 5px;
             position: relative;
             display: flex;
@@ -56,7 +56,7 @@
             left: 0;
             height: 100%;
             width: 100%;
-            background-color: var(--uib-color);
+            background-color: #ccc;
             opacity: 0.1;
         }
 
@@ -65,11 +65,15 @@
             height: 100%;
             width: 100%;
             border-radius: calc(var(--uib-line-weight) / 2);
-            animation: wobble var(--uib-speed) ease-in-out infinite;
             transform: translateX(-90%);
-            background-color: var(--uib-color);
+            background: linear-gradient(90deg, #8b5cf6, #6366f1, #3b82f6);
+            background-size: 200% 200%;
+            animation:
+                wobble var(--uib-speed) ease-in-out infinite,
+                gradient-shift 5s ease infinite;
         }
 
+        /* Wobble animation */
         @keyframes wobble {
 
             0%,
@@ -79,6 +83,21 @@
 
             50% {
                 transform: translateX(90%);
+            }
+        }
+
+        /* Gradient shift animation */
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
             }
         }
     </style>

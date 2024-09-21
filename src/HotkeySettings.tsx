@@ -89,13 +89,13 @@ const HotkeySettings = () => {
     }, []);
 
     return (
-        <div className="h-full w-full bg-[#1a1a1a] flex flex-col items-center justify-center select-none p-4">
-            <h2 className="text-lg font-semibold mb-4 text-gray-100">Select a New Hotkey</h2>
+        <div className="h-dvh w-full bg-[#1a1a1a] flex flex-col items-center justify-center select-none p-4">
+            <h2 className="text-lg mb-2 font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 animate-gradient-shift">Select a New Hotkey</h2>
             <div
                 ref={hotkeyRef}
                 onKeyDown={handleKeyDown}
                 tabIndex={0}
-                className="border border-gray-500 p-2 mb-2 cursor-text rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-100 bg-gray-800"
+                className="mb-2 px-1.5 py-1 text-xs font-semibold border rounded-lg bg-gray-600 text-gray-100 border-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 "
             >
                 {displayHotkey}
             </div>
