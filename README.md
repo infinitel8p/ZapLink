@@ -1,3 +1,3 @@
-# <img src="https://raw.githubusercontent.com/infinitel8p/ZapLink/main/src/assets/zaplink.svg?token=GHSAT0AAAAAACW7MXNMVVBMMUFIK4GWSRRMZXDIXPA" height="25"> ZapLink 
+# <img src="https://github.com/user-attachments/assets/bb7d38ec-bb3c-482e-a0c3-33be6d892d84" height="25"> ZapLink 
 
 A simple desktop tool that monitors the clipboard for valid URLs and opens them automatically when a customizable keyboard shortcut is pressed.
